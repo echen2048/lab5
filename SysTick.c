@@ -1,7 +1,7 @@
 // SysTick.c
 // Runs on TM4C123
 // Provide functions that initialize the SysTick module
-// Put your name here
+// Dennis Liu, Eric Chen
 
 // October 5, 2018
 
@@ -29,19 +29,43 @@
 #define NVIC_ST_CURRENT_R   (*((volatile unsigned long *)0xE000E018))
 void SysTick_Init(void){
 	// write this
+	NVIC_ST_CTRL_R = 0;
+	NVIC_ST_RELOAD_R = 0x00FFFFFF;
+	NVIC_ST_CURRENT_R = 0;
+	
+	NVIC_ST_CTRL_R = 0x5;
 }
 // The delay parameter is in units of the 80 MHz core clock. (12.5 ns)
 void SysTick_Wait(uint32_t delay){
 	// write this
+	uint32_t elapsed;
+	uint32_t start = NVIC_ST_CURRENT_R ;
+	
+	do{
+		elapsed = (start-NVIC_ST_CURRENT_R) & 0x00FFFFFF;
+	}while(elapsed <= delay);
+	
 }
 // The delay parameter is in ms.
 // 80000 bus cycles equals 1ms
 void SysTick_Wait1ms(uint32_t delay){
 	// write this
+	int i;
+	
+	for(i=0; i<delay; i++)
+	{
+		SysTick_Wait(80000);
+	}
+	
 }
 
 // 800000 bus cycles equals 10ms
 void SysTick_Wait10ms(unsigned long delay){
 	// write this
+	long j;
+	for(j=0; j<delay; j++)
+	{
+		SysTick_Wait(800000);
+	}
 }
 
