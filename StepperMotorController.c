@@ -40,28 +40,33 @@ void EnableInterrupts(void);
 // logic analyzer on the real board
 #define PA4       (*((volatile unsigned long *)0x40004040))
 #define PE50      (*((volatile unsigned long *)0x400240FC))
+
 void SendDataToLogicAnalyzer(void){
   UART0_DR_R = 0x80|(PA4<<2)|PE50;
 }
 
-//write functions for spin motor with led flash input arg
-
 int main(void){ 
+	int delay = 100;
   TExaS_Init(&SendDataToLogicAnalyzer);    // activate logic analyzer and set system clock to 80 MHz
   SysTick_Init();   
 // you initialize your system here
+	SYSCTL_RCGCGPIO_R |= 0x22;
+  delay++;
 	
-	//set up statemachine and inputs
-
+	GPIO_PORTA_DIR_R  &= 0xCF;
+	GPIO_PORTA_DEN_R	|= 0x20;
+	
+	GPIO_PORTB_DIR_R  |= 0x40;
+	GPIO_PORTB_DEN_R  |= 0x40;
+	
+	GPIO_PORTE_DIR_R  |= 0x2F;
+	GPIO_PORTE_DEN_R  |= 0x2F;
+	
+	GPIO_PORTF_DIR_R  |= 0x1;
+	GPIO_PORTF_DEN_R  |= 0x1;
 	
   EnableInterrupts();   
   while(1){
-		//check current state output
-		//conditional if
-		//if output is 1, fcnx
-		//if output is 2, fcny
-		//if output is 0, check current state again
-		
 // output
 // wait
 // input
