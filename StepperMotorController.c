@@ -35,6 +35,10 @@
 #define GPIO_PORTF_DIR_R				(*((volatile uint32_t *)0x40025400))
 #define GPIO_PORTF_DEN_R 				(*((volatile uint32_t *)0x4002551C))
 
+#define idle 0
+#define wipe 1
+#define wash 2
+
 void EnableInterrupts(void);
 // edit the following only if you need to move pins from PA4, PE3-0      
 // logic analyzer on the real board
@@ -45,27 +49,45 @@ void SendDataToLogicAnalyzer(void){
 }
 
 //write functions for spin motor with led flash input arg
+struct state {
+		uint8_t out; //int output 0,1,2
+		uint16_t next[4]; //next 3 possible states
+};
+typedef const struct state state_t;
 
-int main(void){ 
+void step(uint8_t cstate) {
+	uint16_t stepstate[5]={1,2,4,8,16};
+	if(cstate==0) {
+		return;
+	}
+	else {
+		uint8_t i;
+		for(i=0;i<5;i++) {
+			GPIO_PORTE_DATA_R = stepstate[i];
+		}
+	}
+}
+
+int main(void){
+	
+	state_t fsm[3] = {{0,{idle,wipe,wash,idle}},{1,{idle,wipe,wash,idle}},{2,{idle,wipe,wash,idle}}};
+	uint8_t cs;
+	uint8_t input;
+	cs=idle;
+	
   TExaS_Init(&SendDataToLogicAnalyzer);    // activate logic analyzer and set system clock to 80 MHz
   SysTick_Init();   
-// you initialize your system here
-	
-	//set up statemachine and inputs
-
-	
-  EnableInterrupts();   
+  EnableInterrupts(); 
+  
   while(1){
-		//check current state output
-		//conditional if
-		//if output is 1, fcnx
-		//if output is 2, fcny
-		//if output is 0, check current state again
+		//call move fcn with cs as arg
 		
-// output
-// wait
-// input
-// next		
+		input = GPIO_PORTA_DATA_R;
+		input &= 0x30;
+		input= input>>4;
+		
+		cs = fsm[cs].next[input];
+		
   }
 }
 
