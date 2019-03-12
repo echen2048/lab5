@@ -125,7 +125,7 @@ int main(void){
 		{33,10,{BCK2,BCK16,BCK16,LED_B1}},
 		{40,10,{BCK16,N_BCK4,N_BCK4,NLED_B8}},
 		{34,10,{N_BCK4,link1,link1,NLED_B2}},	
-		{1,10,{link1,start16,start16,link1}}
+		{1,10,{N_BCK2,start16,start16,link1}}
 	};
 	uint16_t input;
 	uint8_t stepperout;
@@ -165,6 +165,5 @@ int main(void){
 		
   }
 }
-
 
 
